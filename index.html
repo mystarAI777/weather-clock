@@ -2,69 +2,74 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<title>Kraken RGB 240用 天気と時計</title>
+<title>時間・分・天気画像の表示</title>
 <style>
   html, body {
     margin: 0; padding: 0;
     width: 240px;
     height: 240px;
-    background: #000;
+    background: #000000;
     font-family: 'Segoe UI', sans-serif;
     overflow: hidden;
+    color: white;
   }
   #container {
     position: relative;
     width: 240px;
     height: 240px;
-    text-align: center;
   }
   #weather-img {
     position: absolute;
-    top: 0; left: 0;
-    width: 240px; height: 240px;
-    opacity: 0.3;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 240px;
+    opacity: 1.0; /* 背景の透過 */
     z-index: 0;
   }
-  #clock {
+  #hours {
     position: absolute;
-    top: 15px;
-    right: 0;
-    width: 200px;
-    height: 210px;
-    font-size: 64px;
-    font-weight: bold;
-    line-height: 1.2;
-    color: #fff;
-    z-index: 1;
+    top: 40px;
+    left: 0;
+    font-size: 120px;
+   	font-weight: bold;
+    color: #00ff00; /* 時間の色 */
     user-select: none;
-  }
-  #hours, #minutes {
-    display: block;
-    text-align: right;
+    z-index: 1;
   }
   #minutes {
-    padding-left: 1em;
+    position: absolute;
+    top: 180px;
+    left: 40px; /* 時間の下で右に1文字分ずらす */
+    font-size: 100px;
+    font-weight: bold;
+    color: #ffaa00; /* 分の色 */
+    user-select: none;
+    z-index: 1;
   }
 </style>
 </head>
 <body>
   <div id="container">
     <img id="weather-img" src="https://assets.msn.com/weathermapdata/1/static/weather/Icons/taskbar_v10/Condition_Card/D200PartlySunnyV2.svg" alt="天気" />
-    <div id="clock">
-      <span id="hours">00</span>
-      <span id="minutes">00</span>
-    </div>
+    <span id="hours">00</span>
+    <span id="minutes">00</span>
   </div>
 <script>
-  function updateClock() {
+  function updateHours() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2,'0');
-    const m = String(now.getMinutes()).padStart(2,'0');
     document.getElementById('hours').textContent = h;
-    document.getElementById('minutes').textContent = '\u3000' + m;
   }
-  setInterval(updateClock, 1000);
-  updateClock();
+  function updateMinutes() {
+    const now = new Date();
+    const m = String(now.getMinutes()).padStart(2,'0');
+    document.getElementById('minutes').textContent = m;
+  }
+  setInterval(updateHours, 1000);
+  setInterval(updateMinutes, 1000);
+  updateHours();
+  updateMinutes();
 </script>
 </body>
 </html>
