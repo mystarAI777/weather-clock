@@ -29,22 +29,32 @@
   }
   #hours {
     position: absolute;
-    top: 40px;
+    top: 0px;
     left: 0;
     font-size: 120px;
    	font-weight: bold;
     color: #00ff00; /* 時間の色 */
     user-select: none;
+    text-shadow:
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000;
     z-index: 1;
   }
   #minutes {
     position: absolute;
-    top: 180px;
+    top: 125px;
     left: 40px; /* 時間の下で右に1文字分ずらす */
     font-size: 100px;
     font-weight: bold;
     color: #ffaa00; /* 分の色 */
     user-select: none;
+    text-shadow:
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
+    -2px 2px 0 #000,
+    2px 2px 0 #000;
     z-index: 1;
   }
 </style>
