@@ -26,16 +26,16 @@
     left: 0;
     width: 110px;
     height: 110px;
-    opacity: 1.0; /\* 背景の透過 \*/
+    opacity: 1.0; /* 背景の透過 */
     z-index: 0;
   }
   #hours {
     position: absolute;
     top: 0px;
-    left: 0; /\* 左端にぴったり \*/
+    left: 0; /* 左端にぴったり */
     font-size: 150px;
     font-weight: bold;
-    color: #00ff00; /\* 時間の色 \*/
+    color: #00ff00; /* 時間の色 */
     user-select: none;
     margin: 0;
     padding: 0;
@@ -49,21 +49,21 @@
   #minutes {
     position: absolute;
     top: 75px;
-    left: 90px; /\* 時間の下で右に1文字分ずらす \*/
+    left: 90px; /* 時間の下で右に1文字分ずらす */
     font-size: 130px;
     font-weight: bold;
-    color: #ffcc00; /\* 分の色 \*/
+    color: #ffcc00; /* 分の色 */
     user-select: none;
-   / text-shadow:
-   /   5px -5px 0 #FFF,
-  /  5px 5px 0 #FFF;
+    /* text-shadow:
+      5px -5px 0 #FFF,
+      5px 5px 0 #FFF; */
     z-index: 1;
   }
 </style>
 </head>
 <body>
   <div id="container">
-    <img id="weather-img" src="https://assets.msn.com/weathermapdata/1/static/weather/Icons/taskbar\_v10/Condition\_Card/MostlySunnyDay.svg" alt="天気" />
+    <img id="weather-img" src="https://assets.msn.com/weathermapdata/1/static/weather/Icons/taskbar_v10/Condition_Card/MostlySunnyDay.svg" alt="天気" />
     <span id="hours">00</span>
     <span id="minutes">00</span>
   </div>
