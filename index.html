@@ -2,45 +2,51 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<title>天気と時計（文字と背景画像重ね）</title>
+<title>Kraken RGB 240用 天気と時計</title>
 <style>
-  body {
-    background: #f6f6f6;
+  html, body {
+    margin: 0; padding: 0;
+    width: 128px;
+    height: 48px;
+    background: #000000;
     font-family: 'Segoe UI', sans-serif;
-    margin: 20px;
-    text-align: center;
+    overflow: hidden;
   }
   #container {
     position: relative;
-    display: inline-block;
-    width: 150px;
-    height: 130px;
+    width: 128px;
+    height: 48px;
+    text-align: center;
   }
   #weather-img {
     position: absolute;
-    top: 10px;
+    top: 0;
     left: 0;
-    width: 150px;
-    height: 130px;
+    width: 48px;
+    height: 48px;
+    opacity: 0.4; /* 背景の透過調整 */
     z-index: 0;
-    opacity: 0.3; /* 控えめな透過 */
   }
   #clock {
-    position: relative;
-    z-index: 1;
-    font-size: 8em;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 80px;
+    height: 48px;
+    font-size: 32px;
     font-weight: bold;
-    color: black;
-    line-height: 1.0;
+    line-height: 48px;
+    color: #FFFFFF;
+    z-index: 1;
     user-select: none;
+    white-space: nowrap;
   }
-  #hours {
-    display: block;
+  #hours, #minutes {
+    display: inline-block;
+    vertical-align: middle;
   }
   #minutes {
-    display: block;
-    /* 全角スペース1文字のインデント */
-    text-indent: 1em;
+    padding-left: 0.5em; /* 分を少し右にずらす */
   }
 </style>
 </head>
@@ -48,8 +54,7 @@
   <div id="container">
     <img id="weather-img" src="https://assets.msn.com/weathermapdata/1/static/weather/Icons/taskbar_v10/Condition_Card/D200PartlySunnyV2.svg" alt="天気" />
     <div id="clock">
-      <span id="hours">00</span>
-      <span id="minutes">00</span>
+      <span id="hours">00</span><span id="minutes">00</span>
     </div>
   </div>
 <script>
@@ -58,7 +63,7 @@
     const h = String(now.getHours()).padStart(2,'0');
     const m = String(now.getMinutes()).padStart(2,'0');
     document.getElementById('hours').textContent = h;
-    document.getElementById('minutes').textContent = '\u3000' + m;  // 全角スペースU+3000を先頭に付加
+    document.getElementById('minutes').textContent = m;
   }
   setInterval(updateClock, 1000);
   updateClock();
