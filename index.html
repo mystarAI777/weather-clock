@@ -17,10 +17,7 @@
       margin-bottom: 20px;
       white-space: nowrap;
     }
-    #hours {
-      display: block;
-    }
-    #minutes {
+    #hours, #minutes {
       display: block;
     }
     #weather-img {
@@ -35,4 +32,23 @@
     <span id="hours">00</span>
     <span id="minutes">00</span>
   </div>
-  <img
+  <img 
+    id="weather-img" 
+    src="https://assets.msn.com/weathermapdata/1/static/weather/Icons/taskbar_v10/Condition_Card/D200PartlySunnyV2.svg" 
+    alt="曇り所により晴れ" 
+    width="72" height="72"
+    title="曇り所により晴れ"
+  />
+  <script>
+    function updateClock() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('hours').textContent = h;
+      document.getElementById('minutes').textContent = m;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+  </script>
+</body>
+</html>
