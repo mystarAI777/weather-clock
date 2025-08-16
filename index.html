@@ -13,12 +13,12 @@
     overflow: hidden;
     color: white;
   }
- #container {
-  position: relative;
-  width: 220px;
-  height: 220px;
-  margin: 0;
-  padding: 0;
+  #container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 0;
+    padding: 0;
   }
   #weather-img {
     position: absolute;
@@ -32,31 +32,33 @@
   #hours {
     position: absolute;
     top: 0px;
-    left: 0;
+    left: 0; /* 左端にぴったり */
     font-size: 150px;
-   	font-weight: bold;
+    font-weight: bold;
     color: #00ff00; /* 時間の色 */
     user-select: none;
+    margin: 0;
+    padding: 0;
     text-shadow:
-    -2px -2px 0 #000,
-    2px -2px 0 #000,
-    -2px 2px 0 #000,
-    2px 2px 0 #000;
+      -2px -2px 0 #000,
+      2px -2px 0 #000,
+      -2px 2px 0 #000,
+      2px 2px 0 #000;
     z-index: 2;
   }
   #minutes {
     position: absolute;
-    top: 85px;
+    top: 75px;
     left: 90px; /* 時間の下で右に1文字分ずらす */
     font-size: 130px;
     font-weight: bold;
     color: #ffcc00; /* 分の色 */
     user-select: none;
     text-shadow:
-    -2px -2px 0 #000,
-    2px -2px 0 #000,
-    -2px 2px 0 #000,
-    2px 2px 0 #000;
+      -2px -2px 0 #000,
+      2px -2px 0 #000,
+      -2px 2px 0 #000,
+      2px 2px 0 #000;
     z-index: 1;
   }
 </style>
@@ -70,12 +72,12 @@
 <script>
   function updateHours() {
     const now = new Date();
-    const h = String(now.getHours()).padStart(2,'0');
+    const h = String(now.getHours()).padStart(2, '0');
     document.getElementById('hours').textContent = h;
   }
   function updateMinutes() {
     const now = new Date();
-    const m = String(now.getMinutes()).padStart(2,'0');
+    const m = String(now.getMinutes()).padStart(2, '0');
     document.getElementById('minutes').textContent = m;
   }
   setInterval(updateHours, 1000);
