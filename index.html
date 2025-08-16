@@ -54,10 +54,22 @@
     font-weight: bold;
     color: #ffcc00; /* 分の色 */
     user-select: none;
-   / text-shadow:
-   /   5px -5px 0 #FFF,
-  /  5px 5px 0 #FFF;
+   /* text-shadow:
+      5px -5px 0 #FFF,
+      5px 5px 0 #FFF;*/
     z-index: 1;
+  }
+  #precipitation {
+    position: absolute;
+    top: 130px;
+    left: 0;
+    width: 220px;
+    font-size: 24px;
+    font-weight: bold;
+    color: #00ccff;
+    text-align: center;
+    user-select: none;
+    z-index: 3;
   }
 </style>
 </head>
@@ -66,22 +78,24 @@
     <img id="weather-img" src="https://assets.msn.com/weathermapdata/1/static/weather/Icons/taskbar_v10/Condition_Card/MostlySunnyDay.svg" alt="天気" />
     <span id="hours">00</span>
     <span id="minutes">00</span>
+    <div id="precipitation">降水確率: --</div>
   </div>
 <script>
-  function updateHours() {
+  function updateTime() {
     const now = new Date();
-    const h = String(now.getHours()).padStart(2, '0');
-    document.getElementById('hours').textContent = h;
+    document.getElementById('hours').textContent = String(now.getHours()).padStart(2, '0');
+    document.getElementById('minutes').textContent = String(now.getMinutes()).padStart(2, '0');
   }
-  function updateMinutes() {
-    const now = new Date();
-    const m = String(now.getMinutes()).padStart(2, '0');
-    document.getElementById('minutes').textContent = m;
+  // 降水確率を任意の値で更新可能（例として30%に設定）
+  function updatePrecipitation(pop) {
+    const popElem = document.getElementById('precipitation');
+    popElem.textContent = pop !== null && pop !== undefined ? `降水確率: ${pop}` : '降水確率: --';
   }
-  setInterval(updateHours, 1000);
-  setInterval(updateMinutes, 1000);
-  updateHours();
-  updateMinutes();
+  setInterval(updateTime, 1000);
+  updateTime();
+
+  // ここで降水確率をセット（API連携などで動的に変える想定）
+  updatePrecipitation('30%');
 </script>
 </body>
 </html>
