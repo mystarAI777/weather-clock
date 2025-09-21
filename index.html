@@ -19,19 +19,23 @@
     height: 220px;
     margin: 0;
     padding: 0;
+    display: flex; /* flexboxを使って中央寄せ */
+    justify-content: center;
+    align-items: center;
   }
   #weather-img {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0px; /* 位置を調整 */
+    right: 0px; /* 右端に配置 */
     width: 110px;
     height: 110px;
-    opacity: 1.0; /* 背景の透過 */
+    opacity: 1.0;
     z-index: 0;
+    border-radius: 5px; /* 角を丸く */
   }
   #hours {
     position: absolute;
-    top: 0px;
+    top: 5px; /* 上の位置を微調整 */
     left: 0; /* 左端にぴったり */
     font-size: 150px;
     font-weight: bold;
@@ -45,29 +49,81 @@
       -2px 2px 0 #000,
       2px 2px 0 #000;
     z-index: 2;
+    line-height: 1; /* 余白を調整 */
   }
   #minutes {
     position: absolute;
-    top: 75px;
+    top: 75px; /* 時間の下で調整 */
     left: 90px; /* 時間の下で右に1文字分ずらす */
     font-size: 130px;
     font-weight: bold;
     color: #ffcc00; /* 分の色 */
     user-select: none;
-    /* text-shadow:
-      5px -5px 0 #FFF,
-      5px 5px 0 #FFF; */
+    /* text-shadowは元のをコメントアウト */
     z-index: 1;
+    line-height: 1; /* 余白を調整 */
+  }
+  #temperature {
+    position: absolute;
+    top: 115px; /* 天気画像の下に配置 */
+    right: 0px; /* 天気画像と同じく右端に */
+    font-size: 40px; /* 温度のフォントサイズ */
+    font-weight: bold;
+    color: #ffffff; /* 温度の色 */
+    z-index: 1;
+    text-shadow:
+      -1px -1px 0 #000,
+      1px -1px 0 #000,
+      -1px 1px 0 #000,
+      1px 1px 0 #000;
+  }
+  #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 20px;
+      color: #888;
+      z-index: 3;
+      display: none; /* 初期は非表示 */
+  }
+  #error-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 16px;
+      color: red;
+      z-index: 3;
+      display: none; /* 初期は非表示 */
+      text-align: center;
   }
 </style>
 </head>
 <body>
   <div id="container">
-    <img id="weather-img" src="https://assets.msn.com/weathermapdata/1/static/weather/Icons/taskbar_v10/Condition_Card/MostlySunnyDay.svg" alt="天気" />
+    <img id="weather-img" src="" alt="天気" />
     <span id="hours">00</span>
     <span id="minutes">00</span>
+    <span id="temperature">--°</span>
+    <div id="loading">天気読み込み中...</div>
+    <div id="error-message"></div>
   </div>
 <script>
+  // OpenWeatherMap API の設定
+  const API_KEY = 'e514019799c24273af395822251808
+'; // ここにあなたのOpenWeatherMap APIキーを貼り付けてください
+  const LATITUDE = 35.79;       // 所沢の緯度
+  const LONGITUDE = 139.46;     // 所沢の経度
+  const UNITS = 'metric';       // 単位: 'metric' (摂氏), 'imperial' (華氏)
+  const LANG = 'ja';            // 言語: 'ja' (日本語)
+
+  const weatherImg = document.getElementById('weather-img');
+  const temperatureSpan = document.getElementById('temperature');
+  const loadingDiv = document.getElementById('loading');
+  const errorDiv = document.getElementById('error-message');
+
+  // --- 時刻表示の更新 ---
   function updateHours() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2, '0');
@@ -78,10 +134,65 @@
     const m = String(now.getMinutes()).padStart(2, '0');
     document.getElementById('minutes').textContent = m;
   }
-  setInterval(updateHours, 1000);
-  setInterval(updateMinutes, 1000);
-  updateHours();
-  updateMinutes();
+  setInterval(updateHours, 1000); // 1秒ごとに更新
+  setInterval(updateMinutes, 1000); // 1秒ごとに更新
+  updateHours(); // ページの読み込み時に一度実行
+  updateMinutes(); // ページの読み込み時に一度実行
+
+  // --- 天気情報の更新 ---
+  async function updateWeather() {
+    loadingDiv.style.display = 'block'; // ローディング表示
+    errorDiv.style.display = 'none';    // エラーメッセージ非表示
+    weatherImg.style.display = 'none';  // 画像を非表示
+    temperatureSpan.style.display = 'none'; // 温度を非表示
+
+    try {
+      // OpenWeatherMap One Call API 3.0 のエンドポイント
+      // daily のみ取得し、他の情報を除外
+      const apiUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${LATITUDE}&lon=${LONGITUDE}&exclude=minutely,hourly,alerts&appid=${API_KEY}&units=${UNITS}&lang=${LANG}`;
+
+      const response = await fetch(apiUrl);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+      console.log('天気データ:', data); // 取得したデータをコンソールで確認
+
+      // 今日の天気データ (daily配列の最初の要素)
+      const today = data.daily[0]; 
+      
+      if (today) {
+        const iconCode = today.weather[0].icon;
+        const maxTemp = Math.round(today.temp.max);
+        const minTemp = Math.round(today.temp.min);
+
+        // 天気アイコンの更新
+        weatherImg.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
+        weatherImg.alt = today.weather[0].description;
+        weatherImg.style.display = 'block'; // 画像を表示
+
+        // 気温の更新 (最高気温/最低気温)
+        temperatureSpan.textContent = `${maxTemp}° / ${minTemp}°`;
+        temperatureSpan.style.display = 'block'; // 温度を表示
+      } else {
+        throw new Error('今日の天気データが見つかりませんでした。');
+      }
+
+      loadingDiv.style.display = 'none'; // ローディング非表示
+
+    } catch (error) {
+      console.error('天気データの取得中にエラーが発生しました:', error);
+      errorDiv.textContent = '天気データを取得できませんでした。';
+      errorDiv.style.display = 'block'; // エラーメッセージ表示
+      loadingDiv.style.display = 'none'; // ローディング非表示
+    }
+  }
+
+  // ページが読み込まれたら天気データを取得
+  document.addEventListener('DOMContentLoaded', updateWeather);
+
+  // 1時間ごとに天気予報を更新 (APIのリクエスト制限に注意)
+  setInterval(updateWeather, 3600 * 1000); // 1時間 = 3600秒 * 1000ミリ秒
 </script>
 </body>
 </html>
