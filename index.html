@@ -19,7 +19,7 @@
     height: 220px;
     margin: 0;
     padding: 0;
-    display: flex; /* flexboxを使って中央寄せ */
+    display: flex;
     justify-content: center;
     align-items: center;
   }
@@ -59,7 +59,6 @@
     font-weight: bold;
     color: #ffcc00; /* 分の色 */
     user-select: none;
-    /* text-shadowは元のをコメントアウト */
     z-index: 1;
     line-height: 1; /* 余白を調整 */
   }
@@ -110,13 +109,10 @@
     <div id="error-message"></div>
   </div>
 <script>
-  // OpenWeatherMap API の設定
-  const API_KEY = 'e514019799c24273af395822251808
-'; // ここにあなたのOpenWeatherMap APIキーを貼り付けてください
-  const LATITUDE = 35.79;       // 所沢の緯度
-  const LONGITUDE = 139.46;     // 所沢の経度
-  const UNITS = 'metric';       // 単位: 'metric' (摂氏), 'imperial' (華氏)
-  const LANG = 'ja';            // 言語: 'ja' (日本語)
+  // WeatherAPI.com の設定
+  const API_KEY = 'e514019799c24273af395822251808'; // ここにあなたのWeatherAPI.com APIキーを貼り付けてください
+  const LOCATION = 'Tokorozawa'; // 所沢を指定。緯度経度 ('35.79,139.46') も可能
+  const LANG = 'ja';             // 言語: 'ja' (日本語)
 
   const weatherImg = document.getElementById('weather-img');
   const temperatureSpan = document.getElementById('temperature');
@@ -147,28 +143,30 @@
     temperatureSpan.style.display = 'none'; // 温度を非表示
 
     try {
-      // OpenWeatherMap One Call API 3.0 のエンドポイント
-      // daily のみ取得し、他の情報を除外
-      const apiUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${LATITUDE}&lon=${LONGITUDE}&exclude=minutely,hourly,alerts&appid=${API_KEY}&units=${UNITS}&lang=${LANG}`;
+      // WeatherAPI.com forecast.json エンドポイント
+      // days=1 で今日の予報のみ取得
+      const apiUrl = `https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${LOCATION}&days=1&aqi=no&alerts=no&lang=${LANG}`;
 
       const response = await fetch(apiUrl);
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        // エラーレスポンスの詳細を解析
+        const errorData = await response.json();
+        throw new Error(`HTTP error! Status: ${response.status}. Message: ${errorData.error.message || 'Unknown error'}`);
       }
       const data = await response.json();
-      console.log('天気データ:', data); // 取得したデータをコンソールで確認
+      console.log('天気データ (WeatherAPI.com):', data); // 取得したデータをコンソールで確認
 
-      // 今日の天気データ (daily配列の最初の要素)
-      const today = data.daily[0]; 
+      // 今日の天気データ (forecast.forecastday配列の最初の要素)
+      const todayForecast = data.forecast.forecastday[0]; 
       
-      if (today) {
-        const iconCode = today.weather[0].icon;
-        const maxTemp = Math.round(today.temp.max);
-        const minTemp = Math.round(today.temp.min);
+      if (todayForecast) {
+        const iconUrl = todayForecast.day.condition.icon; // 日中のアイコンURL
+        const maxTemp = Math.round(todayForecast.day.maxtemp_c);
+        const minTemp = Math.round(todayForecast.day.mintemp_c);
 
         // 天気アイコンの更新
-        weatherImg.src = `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
-        weatherImg.alt = today.weather[0].description;
+        weatherImg.src = `https:${iconUrl}`; // WeatherAPIのURLは 'https:' がない場合がある
+        weatherImg.alt = todayForecast.day.condition.text;
         weatherImg.style.display = 'block'; // 画像を表示
 
         // 気温の更新 (最高気温/最低気温)
@@ -182,7 +180,7 @@
 
     } catch (error) {
       console.error('天気データの取得中にエラーが発生しました:', error);
-      errorDiv.textContent = '天気データを取得できませんでした。';
+      errorDiv.textContent = `天気データを取得できませんでした: ${error.message}`;
       errorDiv.style.display = 'block'; // エラーメッセージ表示
       loadingDiv.style.display = 'none'; // ローディング非表示
     }
